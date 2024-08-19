@@ -23,16 +23,10 @@ resource "aws_iam_policy" "glue_policy" {
     Statement = [
       {
         Effect = "Allow",
-        Action = [
-          "s3:ListBucket",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject"
-        ],
+        Action = "s3:*",
         Resource = [
           "arn:aws:s3:::${var.script_bucket_name}",
           "arn:aws:s3:::${var.script_bucket_name}/*",
-          "arn:aws:s3:::${var.script_bucket_name}/scripts/*",
           "arn:aws:s3:::${var.source_bucket_name}",
           "arn:aws:s3:::${var.source_bucket_name}/*",
           "arn:aws:s3:::${var.destination_bucket_name}",
