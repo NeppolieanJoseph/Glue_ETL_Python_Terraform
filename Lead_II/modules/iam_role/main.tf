@@ -15,7 +15,7 @@ resource "aws_iam_role" "glue_role" {
   })
 }
 
-/*resource "aws_iam_policy" "glue_policy" {
+resource "aws_iam_policy" "glue_policy" {
   name = "${var.role_name}-policy"
 
   policy = jsonencode({
@@ -55,7 +55,7 @@ resource "aws_iam_role" "glue_role" {
 resource "aws_iam_role_policy_attachment" "glue_role_attach" {
   role       = aws_iam_role.glue_role.name
   policy_arn = aws_iam_policy.glue_policy.arn
-}*/
+}
 
 resource "aws_iam_role_policy_attachment" "glue_role_attach" {
   role      = aws_iam_role.glue_role.name
