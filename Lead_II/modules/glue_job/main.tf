@@ -3,7 +3,8 @@ resource "aws_glue_job" "this" {
   role_arn = var.role_arn
 
   command {
-    script_location = "s3://${var.script_bucket_name}/${var.glue_script_key}"
+    #script_location = "s3://${var.script_bucket_name}/${var.glue_script_key}"
+    script_location = "s3://glue-my-script-bucket/scripts/glue_script.py"
     name            = "glueetl"
     python_version  = "3"
   }
