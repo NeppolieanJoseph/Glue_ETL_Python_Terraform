@@ -32,6 +32,7 @@ resource "aws_iam_role" "glue_role" {
         Resource = [
           "arn:aws:s3:::${var.script_bucket_name}",
           "arn:aws:s3:::${var.script_bucket_name}/*",
+          "arn:aws:s3:::${var.script_bucket_name}/scripts/*",
           "arn:aws:s3:::${var.source_bucket_name}",
           "arn:aws:s3:::${var.source_bucket_name}/*",
           "arn:aws:s3:::${var.destination_bucket_name}",
