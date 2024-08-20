@@ -18,3 +18,8 @@ variable "destination_bucket_name" {
   type        = string
 }
 
+variable "region" {
+  description = "Region Value"
+  type = string
+}
+

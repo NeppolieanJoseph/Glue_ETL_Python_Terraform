@@ -41,17 +41,25 @@ resource "aws_iam_policy" "glue_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "arn:aws:logs:*:*:*"
-      }
+      },
+      {
+        Effect =  "Allow",
+        Action = [
+          "glue:GetPartitions",
+          "glue:GetTable",
+          "glue:GetTables"
+      ],
+        Resource =  [
+          "arn:aws:glue:${var.region}:730335485200:catalog",
+          "arn:aws:glue:${var.region}:730335485200:database/*",
+          "arn:aws:glue:${var.region}:730335485200:table/*/*"
+        ]
+        }
     ]
   })
 }
 
-/*resource "aws_iam_role_policy_attachment" "glue_role_attach" {
+resource "aws_iam_role_policy_attachment" "glue_role_attach" {
   role       = aws_iam_role.glue_role.name
   policy_arn = aws_iam_policy.glue_policy.arn
-}*/
-
-resource "aws_iam_role_policy_attachment" "glue_role_attach" {
-  role      = aws_iam_role.glue_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
 }

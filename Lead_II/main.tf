@@ -46,6 +46,7 @@ module "glue_iam_role" {
   script_bucket_name   = var.script_bucket_name
   source_bucket_name   = var.source_bucket_name
   destination_bucket_name = var.destination_bucket_name
+  region                  = var.aws_region
 }
 
 module "glue_job" {
