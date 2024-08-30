@@ -12,6 +12,7 @@ resource "aws_db_instance" "db" {
   multi_az             = true
   publicly_accessible  = false
   storage_type         = "gp2"
+  backup_retention_period = 7
   vpc_security_group_ids = [var.db_sg_id]
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   skip_final_snapshot = true
