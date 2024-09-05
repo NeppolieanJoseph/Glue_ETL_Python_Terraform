@@ -66,7 +66,7 @@ module "autoscaling_app" {
   #depends_on = [ module.vpc, module.security ] 
 }
 
-/*module "database" {
+module "database" {
   source          = "./modules/database"
   vpc_id          = module.vpc.vpc_id
   private_subnets = module.vpc.private_subnets
@@ -76,11 +76,11 @@ module "autoscaling_app" {
   db_password     = var.db_password # Use a secure method to store passwords
   vpc_name        = var.vpc_name
   #depends_on = [ module.autoscale_web, module.autoscale_web ]
-}*/
+}
 
-#output "db_instance_endpoint" {
-#  value = module.database.db_instance_endpoint
-#}
+output "db_instance_endpoint" {
+  value = module.database.db_instance_endpoint
+}
 
 output "web_lb_dn" {
   value = module.web_servers[0].web_lb_dns
