@@ -1,0 +1,80 @@
+digraph G {
+  rankdir = "RL";
+  node [shape = rect, fontname = "sans-serif"];
+  subgraph "cluster_module.app_servers" {
+    label = "module.app_servers"
+    fontname = "sans-serif"
+    "module.app_servers.aws_instance.app" [label="aws_instance.app"];
+  }
+  subgraph "cluster_module.autoscale_web" {
+    label = "module.autoscale_web"
+    fontname = "sans-serif"
+    "module.autoscale_web.aws_autoscaling_group.web_asg" [label="aws_autoscaling_group.web_asg"];
+    "module.autoscale_web.aws_launch_configuration.web_lc" [label="aws_launch_configuration.web_lc"];
+  }
+  subgraph "cluster_module.autoscaling_app" {
+    label = "module.autoscaling_app"
+    fontname = "sans-serif"
+    "module.autoscaling_app.aws_autoscaling_group.app_asg" [label="aws_autoscaling_group.app_asg"];
+    "module.autoscaling_app.aws_launch_configuration.app_lc" [label="aws_launch_configuration.app_lc"];
+  }
+  subgraph "cluster_module.database" {
+    label = "module.database"
+    fontname = "sans-serif"
+    "module.database.aws_db_instance.db" [label="aws_db_instance.db"];
+    "module.database.aws_db_subnet_group.db_subnet_group" [label="aws_db_subnet_group.db_subnet_group"];
+  }
+  subgraph "cluster_module.security" {
+    label = "module.security"
+    fontname = "sans-serif"
+    "module.security.aws_security_group.app_sg" [label="aws_security_group.app_sg"];
+    "module.security.aws_security_group.db_sg" [label="aws_security_group.db_sg"];
+    "module.security.aws_security_group.web_sg" [label="aws_security_group.web_sg"];
+  }
+  subgraph "cluster_module.vpc" {
+    label = "module.vpc"
+    fontname = "sans-serif"
+    "module.vpc.aws_internet_gateway.igw" [label="aws_internet_gateway.igw"];
+    "module.vpc.aws_route_table.public" [label="aws_route_table.public"];
+    "module.vpc.aws_route_table_association.public_subnet" [label="aws_route_table_association.public_subnet"];
+    "module.vpc.aws_subnet.private" [label="aws_subnet.private"];
+    "module.vpc.aws_subnet.public" [label="aws_subnet.public"];
+    "module.vpc.aws_vpc.main" [label="aws_vpc.main"];
+  }
+  subgraph "cluster_module.web_servers" {
+    label = "module.web_servers"
+    fontname = "sans-serif"
+    "module.web_servers.aws_instance.web" [label="aws_instance.web"];
+    "module.web_servers.aws_lb.web_lb" [label="aws_lb.web_lb"];
+    "module.web_servers.aws_lb_listener.web_listener" [label="aws_lb_listener.web_listener"];
+    "module.web_servers.aws_lb_target_group.web_tg" [label="aws_lb_target_group.web_tg"];
+    "module.web_servers.aws_lb_target_group_attachment.web_tg_attachment" [label="aws_lb_target_group_attachment.web_tg_attachment"];
+  }
+  "module.app_servers.aws_instance.app" -> "module.security.aws_security_group.app_sg";
+  "module.app_servers.aws_instance.app" -> "module.web_servers.aws_lb_listener.web_listener";
+  "module.app_servers.aws_instance.app" -> "module.web_servers.aws_lb_target_group_attachment.web_tg_attachment";
+  "module.autoscale_web.aws_autoscaling_group.web_asg" -> "module.autoscale_web.aws_launch_configuration.web_lc";
+  "module.autoscale_web.aws_launch_configuration.web_lc" -> "module.security.aws_security_group.web_sg";
+  "module.autoscaling_app.aws_autoscaling_group.app_asg" -> "module.autoscaling_app.aws_launch_configuration.app_lc";
+  "module.autoscaling_app.aws_launch_configuration.app_lc" -> "module.security.aws_security_group.app_sg";
+  "module.database.aws_db_instance.db" -> "module.database.aws_db_subnet_group.db_subnet_group";
+  "module.database.aws_db_instance.db" -> "module.security.aws_security_group.db_sg";
+  "module.database.aws_db_subnet_group.db_subnet_group" -> "module.vpc.aws_subnet.private";
+  "module.security.aws_security_group.app_sg" -> "module.security.aws_security_group.web_sg";
+  "module.security.aws_security_group.db_sg" -> "module.security.aws_security_group.app_sg";
+  "module.security.aws_security_group.web_sg" -> "module.vpc.aws_route_table_association.public_subnet";
+  "module.security.aws_security_group.web_sg" -> "module.vpc.aws_subnet.private";
+  "module.vpc.aws_internet_gateway.igw" -> "module.vpc.aws_vpc.main";
+  "module.vpc.aws_route_table.public" -> "module.vpc.aws_internet_gateway.igw";
+  "module.vpc.aws_route_table_association.public_subnet" -> "module.vpc.aws_route_table.public";
+  "module.vpc.aws_route_table_association.public_subnet" -> "module.vpc.aws_subnet.public";
+  "module.vpc.aws_subnet.private" -> "module.vpc.aws_vpc.main";
+  "module.vpc.aws_subnet.public" -> "module.vpc.aws_vpc.main";
+  "module.web_servers.aws_instance.web" -> "module.security.aws_security_group.web_sg";
+  "module.web_servers.aws_lb.web_lb" -> "module.security.aws_security_group.web_sg";
+  "module.web_servers.aws_lb_listener.web_listener" -> "module.web_servers.aws_lb.web_lb";
+  "module.web_servers.aws_lb_listener.web_listener" -> "module.web_servers.aws_lb_target_group.web_tg";
+  "module.web_servers.aws_lb_target_group.web_tg" -> "module.vpc.aws_vpc.main";
+  "module.web_servers.aws_lb_target_group_attachment.web_tg_attachment" -> "module.web_servers.aws_instance.web";
+  "module.web_servers.aws_lb_target_group_attachment.web_tg_attachment" -> "module.web_servers.aws_lb_target_group.web_tg";
+}
