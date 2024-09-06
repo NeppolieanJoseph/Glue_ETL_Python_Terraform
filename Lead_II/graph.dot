@@ -1,0 +1,89 @@
+digraph G {
+  rankdir = "RL";
+  node [shape = rect, fontname = "sans-serif"];
+  "aws_s3_bucket_object.destination_bucket" [label="aws_s3_bucket_object.destination_bucket"];
+  "aws_s3_bucket_object.script_bucket" [label="aws_s3_bucket_object.script_bucket"];
+  "aws_s3_bucket_object.source_bucket" [label="aws_s3_bucket_object.source_bucket"];
+  subgraph "cluster_module.destination_bucket" {
+    label = "module.destination_bucket"
+    fontname = "sans-serif"
+    "module.destination_bucket.aws_s3_bucket.this" [label="aws_s3_bucket.this"];
+    "module.destination_bucket.aws_s3_bucket_public_access_block.this" [label="aws_s3_bucket_public_access_block.this"];
+  }
+  subgraph "cluster_module.glue_iam_role" {
+    label = "module.glue_iam_role"
+    fontname = "sans-serif"
+    "module.glue_iam_role.aws_iam_policy.glue_policy" [label="aws_iam_policy.glue_policy"];
+    "module.glue_iam_role.aws_iam_role.glue_role" [label="aws_iam_role.glue_role"];
+    "module.glue_iam_role.aws_iam_role_policy_attachment.glue_role_attach" [label="aws_iam_role_policy_attachment.glue_role_attach"];
+  }
+  subgraph "cluster_module.glue_job" {
+    label = "module.glue_job"
+    fontname = "sans-serif"
+    "module.glue_job.aws_glue_job.this" [label="aws_glue_job.this"];
+  }
+  subgraph "cluster_module.glue_workflow" {
+    label = "module.glue_workflow"
+    fontname = "sans-serif"
+    "module.glue_workflow.aws_glue_catalog_database.example" [label="aws_glue_catalog_database.example"];
+    "module.glue_workflow.aws_glue_catalog_table.example" [label="aws_glue_catalog_table.example"];
+    "module.glue_workflow.aws_glue_trigger.example" [label="aws_glue_trigger.example"];
+    "module.glue_workflow.aws_glue_workflow.example" [label="aws_glue_workflow.example"];
+  }
+  subgraph "cluster_module.iam_analyst_role" {
+    label = "module.iam_analyst_role"
+    fontname = "sans-serif"
+    "module.iam_analyst_role.aws_iam_policy.glue_job_policy" [label="aws_iam_policy.glue_job_policy"];
+    "module.iam_analyst_role.aws_iam_policy.s3_read_only_policy" [label="aws_iam_policy.s3_read_only_policy"];
+    "module.iam_analyst_role.aws_iam_role.this" [label="aws_iam_role.this"];
+    "module.iam_analyst_role.aws_iam_role_policy_attachment.glue_attachment" [label="aws_iam_role_policy_attachment.glue_attachment"];
+    "module.iam_analyst_role.aws_iam_role_policy_attachment.s3_attachment" [label="aws_iam_role_policy_attachment.s3_attachment"];
+  }
+  subgraph "cluster_module.iam_data_engineer" {
+    label = "module.iam_data_engineer"
+    fontname = "sans-serif"
+    "module.iam_data_engineer.aws_iam_policy.this" [label="aws_iam_policy.this"];
+    "module.iam_data_engineer.aws_iam_role.this" [label="aws_iam_role.this"];
+    "module.iam_data_engineer.aws_iam_role_policy_attachment.this" [label="aws_iam_role_policy_attachment.this"];
+  }
+  subgraph "cluster_module.iam_scientist_role" {
+    label = "module.iam_scientist_role"
+    fontname = "sans-serif"
+    "module.iam_scientist_role.aws_iam_policy.s3_read_policy" [label="aws_iam_policy.s3_read_policy"];
+    "module.iam_scientist_role.aws_iam_role.this" [label="aws_iam_role.this"];
+    "module.iam_scientist_role.aws_iam_role_policy_attachment.s3_attachment" [label="aws_iam_role_policy_attachment.s3_attachment"];
+  }
+  subgraph "cluster_module.script_bucket" {
+    label = "module.script_bucket"
+    fontname = "sans-serif"
+    "module.script_bucket.aws_s3_bucket.this" [label="aws_s3_bucket.this"];
+    "module.script_bucket.aws_s3_bucket_public_access_block.this" [label="aws_s3_bucket_public_access_block.this"];
+  }
+  subgraph "cluster_module.source_bucket" {
+    label = "module.source_bucket"
+    fontname = "sans-serif"
+    "module.source_bucket.aws_s3_bucket.this" [label="aws_s3_bucket.this"];
+    "module.source_bucket.aws_s3_bucket_public_access_block.this" [label="aws_s3_bucket_public_access_block.this"];
+  }
+  "aws_s3_bucket_object.destination_bucket" -> "module.destination_bucket.aws_s3_bucket_public_access_block.this";
+  "aws_s3_bucket_object.script_bucket" -> "module.script_bucket.aws_s3_bucket_public_access_block.this";
+  "aws_s3_bucket_object.source_bucket" -> "module.source_bucket.aws_s3_bucket_public_access_block.this";
+  "module.destination_bucket.aws_s3_bucket_public_access_block.this" -> "module.destination_bucket.aws_s3_bucket.this";
+  "module.glue_iam_role.aws_iam_role_policy_attachment.glue_role_attach" -> "module.glue_iam_role.aws_iam_policy.glue_policy";
+  "module.glue_iam_role.aws_iam_role_policy_attachment.glue_role_attach" -> "module.glue_iam_role.aws_iam_role.glue_role";
+  "module.glue_job.aws_glue_job.this" -> "module.glue_iam_role.aws_iam_role.glue_role";
+  "module.glue_workflow.aws_glue_catalog_database.example" -> "module.destination_bucket.aws_s3_bucket_public_access_block.this";
+  "module.glue_workflow.aws_glue_catalog_table.example" -> "module.glue_workflow.aws_glue_catalog_database.example";
+  "module.glue_workflow.aws_glue_trigger.example" -> "module.glue_workflow.aws_glue_workflow.example";
+  "module.glue_workflow.aws_glue_workflow.example" -> "module.destination_bucket.aws_s3_bucket_public_access_block.this";
+  "module.iam_analyst_role.aws_iam_role_policy_attachment.glue_attachment" -> "module.iam_analyst_role.aws_iam_policy.glue_job_policy";
+  "module.iam_analyst_role.aws_iam_role_policy_attachment.glue_attachment" -> "module.iam_analyst_role.aws_iam_role.this";
+  "module.iam_analyst_role.aws_iam_role_policy_attachment.s3_attachment" -> "module.iam_analyst_role.aws_iam_policy.s3_read_only_policy";
+  "module.iam_analyst_role.aws_iam_role_policy_attachment.s3_attachment" -> "module.iam_analyst_role.aws_iam_role.this";
+  "module.iam_data_engineer.aws_iam_role_policy_attachment.this" -> "module.iam_data_engineer.aws_iam_policy.this";
+  "module.iam_data_engineer.aws_iam_role_policy_attachment.this" -> "module.iam_data_engineer.aws_iam_role.this";
+  "module.iam_scientist_role.aws_iam_role_policy_attachment.s3_attachment" -> "module.iam_scientist_role.aws_iam_policy.s3_read_policy";
+  "module.iam_scientist_role.aws_iam_role_policy_attachment.s3_attachment" -> "module.iam_scientist_role.aws_iam_role.this";
+  "module.script_bucket.aws_s3_bucket_public_access_block.this" -> "module.script_bucket.aws_s3_bucket.this";
+  "module.source_bucket.aws_s3_bucket_public_access_block.this" -> "module.source_bucket.aws_s3_bucket.this";
+}
